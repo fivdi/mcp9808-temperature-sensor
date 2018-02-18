@@ -167,7 +167,7 @@ const validateOpenOptions = (options) => {
   }
 
   return null;
-}
+};
 
 class I2cMcp9808 {
   constructor(i2cBus, i2cAddress) {

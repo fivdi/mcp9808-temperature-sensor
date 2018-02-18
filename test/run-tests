@@ -1,4 +1,10 @@
 #!/bin/sh
+echo detect-critical-alert
+node detect-critical-alert
+echo detect-lower-alert
+node detect-lower-alert
+echo detect-upper-alert
+node detect-upper-alert
 echo open-errors
 node open-errors
 echo open-read-close
