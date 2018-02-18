@@ -2,10 +2,10 @@
 
 const Mcp9808 = require('../');
 
-let tempSensor;
-let celsius;
-
 const currentTemperature = () => {
+  let tempSensor;
+  let celsius;
+
   return Mcp9808.open().then((sensor) => {
     tempSensor = sensor;
     return tempSensor.temperature();
