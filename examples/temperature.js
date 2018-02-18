@@ -14,6 +14,6 @@ Mcp9808.open({
   console.log(temp.celsius + '°C');
   return tempSensor.close();
 }).catch((err) => {
-  console.log(err);
+  console.log(err.stack);
 });
 
