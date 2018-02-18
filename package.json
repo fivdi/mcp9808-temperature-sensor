@@ -1,0 +1,38 @@
+{
+  "name": "mcp9808-temperature-sensor",
+  "version": "1.0.0",
+  "description": "MCP9808 I2C temperature sensor",
+  "main": "mcp9808-temperature-sensor.js",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Tests can only be run manually from the command line.\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fivdi/mcp9808-temperature-sensor.git"
+  },
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "i2c-bus": "^2.0.0",
+    "onoff": "^1.2.0",
+    "mutexify": "^1.2.0"
+  },
+  "keywords": [
+    "linux",
+    "beaglebone",
+    "pi",
+    "raspberry",
+    "i2c",
+    "sensor",
+    "temperature",
+    "mcp9808"
+  ],
+  "author": "fivdi",
+  "license": "MIT"
+}
+

@@ -1,0 +1,8 @@
+#!/bin/sh
+echo open-errors
+node open-errors
+echo open-read-close
+node open-read-close
+echo read-performance
+node read-performance
+
