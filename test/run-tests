@@ -1,4 +1,6 @@
 #!/bin/sh
+echo check-limits-without-gpio
+node check-limits-without-gpio
 echo detect-critical-alert
 node detect-critical-alert
 echo detect-lower-alert
