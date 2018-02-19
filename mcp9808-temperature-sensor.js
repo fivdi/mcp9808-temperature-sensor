@@ -249,12 +249,12 @@ class I2cMcp9808 {
         resolve();
       });
     }).then(() => {
-      return this.readWord(CONFIGURATION_REG).then((config) => {
-        config |= bitsToSet;
-        config &= (~bitsToReset & 0xffff);
+      return this.readWord(CONFIGURATION_REG);
+    }).then((config) => {
+      config |= bitsToSet;
+      config &= (~bitsToReset & 0xffff);
 
-        return this.writeWord(CONFIGURATION_REG, config);
-      });
+      return this.writeWord(CONFIGURATION_REG, config);
     }).then(() => {
       releaseConfigRegLock();
     }, (err) => {
@@ -434,7 +434,6 @@ class Mcp9808 extends EventEmitter {
           '. MCP9808 sensor not found.'
         ));
       }
-    }).then(() => {
       return i2cMcp9808.softReset();
     }).then(() => {
       if (options.lowerAlertTemperature != undefined) {
