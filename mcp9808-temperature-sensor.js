@@ -382,6 +382,11 @@ class Mcp9808 extends EventEmitter {
               alertGpio = new Gpio(options.alertGpioNumber, 'in', 'both');
 
               alertGpio.watch((err, value) => {
+                if (err) {
+                  tempSensor.emit('error', err);
+                  return;
+                }
+
                 let fallingEdge = (value === 0);
 
                 tempSensor.temperature().then((temp) => {
@@ -394,6 +399,8 @@ class Mcp9808 extends EventEmitter {
                   if (fallingEdge && !temp.critical) {
                     return i2cMcp9808.configuration(INTERRUPT_CLEAR_BIT, 0);
                   }
+                }).catch((err) => {
+                  tempSensor.emit('error', err);
                 });
               });
             }
