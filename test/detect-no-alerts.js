@@ -11,25 +11,23 @@ currentTemperature().then((currentTemp) => {
     criticalTemperature: currentTemp + 20
   });
 }).then((sensor) => {
-  let timeout;
+  let watchdog = setTimeout(() => {
+    throw new Error('Expected an alert event with no alerts.');
+  }, 1000);
 
   sensor.on('alert', (tempData) => {
     if (!tempData.belowLowerLimit &&
         !tempData.aboveUpperLimit &&
         !tempData.critical) {
-      clearTimeout(timeout);
+      clearTimeout(watchdog);
 
       setTimeout(() => {
         sensor.close().catch((err) => {
-          console.log(err.stack)
+          console.log(err.stack);
         });
       }, 100);
     }    
   });
-
-  timeout = setTimeout(() => {
-    throw new Error('Expected an alert with no alerts.');
-  }, 1000);
 
   return sensor.enableAlerts();
 }).catch((err) => {

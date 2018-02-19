@@ -11,23 +11,21 @@ currentTemperature().then((currentTemp) => {
     criticalTemperature: currentTemp + 10
   });
 }).then((sensor) => {
-  let timeout;
+  let watchdog = setTimeout(() => {
+    throw new Error('Expected an aboveUpperLimit alert event.');
+  }, 1000);
 
   sensor.on('alert', (tempData) => {
     if (tempData.aboveUpperLimit) {
-      clearTimeout(timeout);
+      clearTimeout(watchdog);
 
       setTimeout(() => {
         sensor.close().catch((err) => {
-          console.log(err.stack)
+          console.log(err.stack);
         });
       }, 100);
     }    
   });
-
-  timeout = setTimeout(() => {
-    throw new Error('Expected an aboveUpperLimit alert.');
-  }, 1000);
 
   return sensor.enableAlerts();
 }).catch((err) => {
