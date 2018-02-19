@@ -3,6 +3,8 @@ echo detect-critical-alert
 node detect-critical-alert
 echo detect-lower-alert
 node detect-lower-alert
+echo detect-no-alerts
+node detect-no-alerts
 echo detect-upper-alert
 node detect-upper-alert
 echo open-errors
