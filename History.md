@@ -1,3 +1,8 @@
+Unpublished
+===========
+
+  * add alert detection tests
+
 1.0.0 / Feb 18 2018
 ===================
 
