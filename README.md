@@ -26,7 +26,7 @@ Supports Node.js versions 4, 6, 8 and 9.
 ## Installation
 
 ```
-npm install fivdi/mcp9808-temperature-sensor#v1.0.0
+npm install mcp9808-temperature-sensor
 ```
 
 ## Usage
