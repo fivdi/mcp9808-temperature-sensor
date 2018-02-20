@@ -1,5 +1,5 @@
-Unpublished
-===========
+1.0.1 / Feb 20 2018
+===================
 
   * add alert detection tests
 
