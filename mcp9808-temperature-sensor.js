@@ -181,7 +181,7 @@ class I2cMcp9808 {
         if (err) {
           reject(err);
         } else {
-          resolve(byte);
+          resolve();
         }
       });
     });
