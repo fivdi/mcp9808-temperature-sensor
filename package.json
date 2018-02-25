@@ -1,6 +1,6 @@
 {
   "name": "mcp9808-temperature-sensor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP9808 I2C temperature sensor",
   "main": "mcp9808-temperature-sensor.js",
   "directories": {
