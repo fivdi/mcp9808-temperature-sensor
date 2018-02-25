@@ -18,7 +18,7 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "i2c-bus": "^2.0.0",
+    "i2c-bus": "^3.0.0",
     "onoff": "^1.2.0",
     "mutexify": "^1.2.0"
   },
