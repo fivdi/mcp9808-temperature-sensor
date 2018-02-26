@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "i2c-bus": "^3.0.0",
-    "onoff": "^1.2.0",
+    "onoff": "^2.0.0",
     "mutexify": "^1.2.0"
   },
   "keywords": [

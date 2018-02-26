@@ -1,3 +1,8 @@
+Unpublished
+===========
+
+  * update dependencies (onoff v2.0.0)
+
 1.0.2 / Feb 25 2018
 ===================
 
