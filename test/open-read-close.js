@@ -3,7 +3,7 @@
 const assert = require('assert');
 const Mcp9808 = require('../');
 
-var tempSensor;
+let tempSensor;
 
 Mcp9808.open().then((sensor) => {
   tempSensor = sensor;
