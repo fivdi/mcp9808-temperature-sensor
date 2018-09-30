@@ -1,3 +1,8 @@
+Unpublished
+===========
+
+  * update dependencies (i2c-bus v4.0.2, onoff v3.2.2)
+
 1.0.5 / Jul 25 2018
 ===================
 

@@ -18,8 +18,8 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "i2c-bus": "^4.0.0",
-    "onoff": "^3.2.0",
+    "i2c-bus": "^4.0.2",
+    "onoff": "^3.2.2",
     "mutexify": "^1.2.0"
   },
   "keywords": [
