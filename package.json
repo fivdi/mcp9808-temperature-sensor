@@ -1,6 +1,6 @@
 {
   "name": "mcp9808-temperature-sensor",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "MCP9808 I2C temperature sensor",
   "main": "mcp9808-temperature-sensor.js",
   "directories": {
@@ -18,8 +18,8 @@
     "node": ">=4.0.0"
   },
   "dependencies": {
-    "i2c-bus": "^4.0.2",
-    "onoff": "^3.2.2",
+    "i2c-bus": "^4.0.9",
+    "onoff": "^4.1.1",
     "mutexify": "^1.2.0"
   },
   "keywords": [
