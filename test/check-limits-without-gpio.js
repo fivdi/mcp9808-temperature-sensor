@@ -20,11 +20,11 @@ currentTemperature().then((temp) => {
 
   return tempSensor.temperature();
 }).then((tempData) => {
-  if (tempData.belowLowerLimit != true ||
-      tempData.aboveUpperLimit != false ||
-      tempData.critical != false) {
+  if (tempData.belowLowerLimit !== true ||
+      tempData.aboveUpperLimit !== false ||
+      tempData.critical !== false) {
     return Promise.reject(new Error(
-      "Expected belowLowerLimit only."
+      'Expected belowLowerLimit only.'
     ));
   }
 
@@ -41,11 +41,11 @@ currentTemperature().then((temp) => {
 
   return tempSensor.temperature();
 }).then((tempData) => {
-  if (tempData.belowLowerLimit != false ||
-      tempData.aboveUpperLimit != false ||
-      tempData.critical != false) {
+  if (tempData.belowLowerLimit !== false ||
+      tempData.aboveUpperLimit !== false ||
+      tempData.critical !== false) {
     return Promise.reject(new Error(
-      "Expected all false."
+      'Expected all false.'
     ));
   }
 
@@ -62,11 +62,11 @@ currentTemperature().then((temp) => {
 
   return tempSensor.temperature();
 }).then((tempData) => {
-  if (tempData.belowLowerLimit != false ||
-      tempData.aboveUpperLimit != true ||
-      tempData.critical != false) {
+  if (tempData.belowLowerLimit !== false ||
+      tempData.aboveUpperLimit !== true ||
+      tempData.critical !== false) {
     return Promise.reject(new Error(
-      "Expected aboveUpperLimit only."
+      'Expected aboveUpperLimit only.'
     ));
   }
 
@@ -83,11 +83,11 @@ currentTemperature().then((temp) => {
 
   return tempSensor.temperature();
 }).then((tempData) => {
-  if (tempData.belowLowerLimit != false ||
-      tempData.aboveUpperLimit != true ||
-      tempData.critical != true) {
+  if (tempData.belowLowerLimit !== false ||
+      tempData.aboveUpperLimit !== true ||
+      tempData.critical !== true) {
     return Promise.reject(new Error(
-      "Expected critical and aboveUpperLimit only."
+      'Expected critical and aboveUpperLimit only.'
     ));
   }
 

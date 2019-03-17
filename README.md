@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/fivdi/mcp9808-temperature-sensor.svg?branch=master)](https://travis-ci.org/fivdi/mcp9808-temperature-sensor)
+[![npm Version](http://img.shields.io/npm/v/mcp9808-temperature-sensor.svg)](https://www.npmjs.com/package/mcp9808-temperature-sensor)
+[![Downloads Per Month](http://img.shields.io/npm/dm/mcp9808-temperature-sensor.svg)](https://www.npmjs.com/package/mcp9808-temperature-sensor)
+
 # mcp9808-temperature-sensor
 
 MCP9808 I2C temperature sensor module for Node.js on Linux boards like the
@@ -90,7 +94,7 @@ Mcp9808.open({
   sensor.on('alert', (temp) => {
     console.log('  alert ' + temp.celsius + '°C');
     if (temp.critical) {
-      console.log('    critical')
+      console.log('    critical');
     }
     if (temp.aboveUpperLimit) {
       console.log('    above upper limit');

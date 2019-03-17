@@ -19,7 +19,7 @@ Mcp9808.open({
   sensor.on('alert', (temp) => {
     console.log('  alert ' + temp.celsius + '°C');
     if (temp.critical) {
-      console.log('    critical')
+      console.log('    critical');
     }
     if (temp.aboveUpperLimit) {
       console.log('    above upper limit');

@@ -61,7 +61,7 @@ const validateOpenOptions = (options) => {
       )
      ) {
     return 'Expected i2cAddress to be an integer' +
-      ' >= 0 and <= 0x7f. Got "' + options.i2cAddress + '".'
+      ' >= 0 and <= 0x7f. Got "' + options.i2cAddress + '".';
   }
 
   if (options.alertGpioNumber !== undefined &&
@@ -211,7 +211,7 @@ class I2cMcp9808 {
         }
       });
     });
-  };
+  }
 
   softReset() {
     return this.configuration(0, SHUTDOWN_BIT).then(() => {
@@ -274,7 +274,7 @@ class I2cMcp9808 {
 
       return this.writeWord(tempRegister, rawTemp);
     });
-  };
+  }
 
   temperature() {
     return this.readWord(TEMP_REG).then((rawTemp) => {
@@ -436,7 +436,7 @@ class Mcp9808 extends EventEmitter {
       }
       return i2cMcp9808.softReset();
     }).then(() => {
-      if (options.lowerAlertTemperature != undefined) {
+      if (options.lowerAlertTemperature !== undefined) {
         return Promise.all([
           i2cMcp9808.lowerAlertTemperature(options.lowerAlertTemperature),
           i2cMcp9808.upperAlertTemperature(options.upperAlertTemperature),
