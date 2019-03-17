@@ -1,5 +1,5 @@
-Unpublished
-===========
+1.0.8 / Mar 17 2019
+===================
   * lint with jshint
   * add travis build
   * add badges
