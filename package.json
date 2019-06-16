@@ -27,14 +27,17 @@
     "jshint": "^2.10.2"
   },
   "keywords": [
-    "linux",
-    "beaglebone",
-    "pi",
-    "raspberry",
-    "i2c",
-    "sensor",
+    "mcp9808",
     "temperature",
-    "mcp9808"
+    "sensor",
+    "iot",
+    "i2c",
+    "raspberry",
+    "raspi",
+    "rpi",
+    "pi",
+    "beaglebone",
+    "linux"
   ],
   "author": "fivdi",
   "license": "MIT"
