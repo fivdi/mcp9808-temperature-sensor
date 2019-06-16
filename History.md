@@ -1,3 +1,9 @@
+1.0.9 / Jun 16 2019
+===================
+  * update dependencies
+  * update npm keywords
+  * remove node 11 from build
+
 1.0.8 / Mar 17 2019
 ===================
   * lint with jshint
