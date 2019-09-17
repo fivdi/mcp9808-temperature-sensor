@@ -1,6 +1,7 @@
 Unpublished
 ===========
   * drop support for node 4
+  * update dependencies (i2c-bus v5.0.0)
 
 1.0.10 / Sep 07 2019
 ====================
