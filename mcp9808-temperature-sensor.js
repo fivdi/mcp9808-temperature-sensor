@@ -176,67 +176,42 @@ class I2cMcp9808 {
   }
 
   writeByte(register, byte) {
-    return new Promise((resolve, reject) => {
-      this._i2cBus.writeByte(this._i2cAddress, register, byte, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return this._i2cBus.writeByte(this._i2cAddress, register, byte);
   }
 
   readWord(register) {
-    return new Promise((resolve, reject) => {
-      this._i2cBus.readWord(this._i2cAddress, register, (err, word) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve((word >> 8) + ((word & 0xff) << 8));
-        }
-      });
-    });
+    return this._i2cBus.readWord(this._i2cAddress, register).
+      then(word => (word >> 8) + ((word & 0xff) << 8));
   }
 
   writeWord(register, word) {
-    return new Promise((resolve, reject) => {
-      word = (word >> 8) + ((word & 0xff) << 8);
-
-      this._i2cBus.writeWord(this._i2cAddress, register, word, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return this._i2cBus.writeWord(
+      this._i2cAddress, register, (word >> 8) + ((word & 0xff) << 8)
+    );
   }
 
   softReset() {
-    return this.configuration(0, SHUTDOWN_BIT).then(() => {
-      return this.configuration(0, ALERT_ENABLED_BIT);
-    }).then(() => {
-      // TODO - can this be removed?
-      return this.configuration(0, ALERT_MODE_BIT);
-    }).then(() => {
-      return Promise.all([
+    return this.configuration(0, SHUTDOWN_BIT).then(_ =>
+      this.configuration(0, ALERT_ENABLED_BIT)
+    ).then(_ =>
+      this.configuration(0, ALERT_MODE_BIT) // TODO - can this be removed?
+    ).then(_ =>
+      Promise.all([
         this.lowerAlertTemperature(0),
         this.upperAlertTemperature(0),
         this.criticalTemperature(0)
-      ]);
-    }).then(() => {
-      return this.resolution(Mcp9808.RESOLUTION_1_16);
-    }).then(() => {
-      return this.configuration(
-        INTERRUPT_CLEAR_BIT,
-        CONFIGURATION_BITS ^ INTERRUPT_CLEAR_BIT
-      );
-    });
+      ])
+    ).then(_ =>
+      this.resolution(Mcp9808.RESOLUTION_1_16)
+    ).then(_ =>
+      this.configuration(
+        INTERRUPT_CLEAR_BIT, CONFIGURATION_BITS ^ INTERRUPT_CLEAR_BIT
+      )
+    );
   }
 
   configuration(bitsToSet, bitsToReset) {
-    let releaseConfigRegLock;
+    let releaseConfigRegLock = null;
 
     // To modify bits in the configuration register it's necessary to read
     // the register, modify the required bits and write back to the
@@ -244,30 +219,32 @@ class I2cMcp9808 {
     // are modifying the configuration register from stepping on each other
     // here a mutex is needed.
     return new Promise((resolve, reject) => {
-      configRegLock((release) => {
+      configRegLock(release => {
         releaseConfigRegLock = release;
         resolve();
       });
-    }).then(() => {
-      return this.readWord(CONFIGURATION_REG);
-    }).then((config) => {
+    }).then(_ =>
+      this.readWord(CONFIGURATION_REG)
+    ).then(config => {
       config |= bitsToSet;
       config &= (~bitsToReset & 0xffff);
 
       return this.writeWord(CONFIGURATION_REG, config);
-    }).then(() => {
-      releaseConfigRegLock();
-    }, (err) => {
-      releaseConfigRegLock();
+    }).then(_ =>
+      releaseConfigRegLock()
+    ).catch(err => {
+      if (releaseConfigRegLock !== null) {
+        releaseConfigRegLock();
+      }
       return Promise.reject(err);
     });
   }
 
   writeTemperature(tempRegister, temp) {
-    return Promise.resolve().then(() => {
+    return Promise.resolve().then(_ => {
       let rawTemp = temp < 0 ? temp + 256 : temp;
-
       rawTemp = (Math.round(rawTemp * 4) << 2);
+
       if (temp < 0) {
         rawTemp |= 0x1000;
       }
@@ -277,7 +254,7 @@ class I2cMcp9808 {
   }
 
   temperature() {
-    return this.readWord(TEMP_REG).then((rawTemp) => {
+    return this.readWord(TEMP_REG).then(rawTemp => {
       let temp = (rawTemp & 0x0fff) / 16;
 
       if (rawTemp & 0x1000) {
@@ -311,9 +288,7 @@ class I2cMcp9808 {
   }
 
   deviceId() {
-    return this.readWord(DEVICE_ID_REVISION_REG).then((word) => {
-      return word >> 8;
-    });
+    return this.readWord(DEVICE_ID_REVISION_REG).then(word => word >> 8);
   }
 
   resolution(val) {
@@ -322,8 +297,7 @@ class I2cMcp9808 {
 
   hysteresis(val) {
     return this.configuration(
-      (val << 9) & HYSTERESIS_BITS,
-      (~val << 9) & HYSTERESIS_BITS
+      (val << 9) & HYSTERESIS_BITS, (~val << 9) & HYSTERESIS_BITS
     );
   }
 
@@ -331,9 +305,8 @@ class I2cMcp9808 {
     // Don't set alertEnabled and alertMode at the same time. If done, there
     // will be no interrupt if the application is started and the current
     // temperature is > upperAlertTemperature and < criticalTemperature.
-    return this.configuration(ALERT_ENABLED_BIT, 0).then(() => {
-      return this.configuration(ALERT_MODE_BIT, 0);
-    });
+    return this.configuration(ALERT_ENABLED_BIT, 0).
+      then(_ => this.configuration(ALERT_MODE_BIT, 0));
   }
 }
 
@@ -368,56 +341,54 @@ class Mcp9808 extends EventEmitter {
       if (errMsg) {
         reject(new Error(errMsg));
       } else {
-        const i2cBusNumber = options.i2cBusNumber === undefined ?
-          DEFAULT_I2C_BUS : options.i2cBusNumber;
+        resolve();
+      }
+    }).then(_ => {
+      const i2cBusNumber = options.i2cBusNumber === undefined ?
+        DEFAULT_I2C_BUS : options.i2cBusNumber;
 
-        const i2cBus = i2c.open(i2cBusNumber, (err) => {
-          if (err) {
-            reject(err);
-          } else {
-            let alertGpio = null;
-            let lastAlertWasCritical = false;
+      return i2c.openPromisified(i2cBusNumber).then(i2cBus => {
+        let alertGpio = null;
+        let lastAlertWasCritical = false;
 
-            if (options.alertGpioNumber !== undefined) {
-              alertGpio = new Gpio(options.alertGpioNumber, 'in', 'both');
+        if (options.alertGpioNumber !== undefined) {
+          alertGpio = new Gpio(options.alertGpioNumber, 'in', 'both');
 
-              alertGpio.watch((err, value) => {
-                if (err) {
-                  tempSensor.emit('error', err);
-                  return;
-                }
-
-                let fallingEdge = (value === 0);
-
-                tempSensor.temperature().then((temp) => {
-                  if (fallingEdge || lastAlertWasCritical) {
-                    tempSensor.emit('alert', temp);
-                  }
-
-                  lastAlertWasCritical = temp.critical;
-
-                  if (fallingEdge && !temp.critical) {
-                    return i2cMcp9808.configuration(INTERRUPT_CLEAR_BIT, 0);
-                  }
-                }).catch((err) => {
-                  tempSensor.emit('error', err);
-                });
-              });
+          alertGpio.watch((err, value) => {
+            if (err) {
+              tempSensor.emit('error', err);
+              return;
             }
 
-            const i2cAddress = options.i2cAddress === undefined ?
-              DEFAULT_I2C_ADDRESS : options.i2cAddress;
+            let fallingEdge = (value === 0);
 
-            i2cMcp9808 = new I2cMcp9808(i2cBus, i2cAddress);
+            tempSensor.temperature().then((temp) => {
+              if (fallingEdge || lastAlertWasCritical) {
+                tempSensor.emit('alert', temp);
+              }
 
-            resolve(new Mcp9808(i2cBus, i2cMcp9808, alertGpio));
-          }
-        });
-      }
-    }).then((sensor) => {
+              lastAlertWasCritical = temp.critical;
+
+              if (fallingEdge && !temp.critical) {
+                return i2cMcp9808.configuration(INTERRUPT_CLEAR_BIT, 0);
+              }
+            }).catch((err) => {
+              tempSensor.emit('error', err);
+            });
+          });
+        }
+
+        const i2cAddress = options.i2cAddress === undefined ?
+          DEFAULT_I2C_ADDRESS : options.i2cAddress;
+
+        i2cMcp9808 = new I2cMcp9808(i2cBus, i2cAddress);
+
+        return new Mcp9808(i2cBus, i2cMcp9808, alertGpio);
+      });
+    }).then(sensor => {
       tempSensor = sensor;
       return i2cMcp9808.manufacturerId();
-    }).then((manufacturerId) => {
+    }).then(manufacturerId => {
       if (manufacturerId !== MANUFACTURER_ID) {
         return Promise.reject(new Error(
           'Expected manufacturer ID to be 0x' + MANUFACTURER_ID.toString(16) +
@@ -426,7 +397,7 @@ class Mcp9808 extends EventEmitter {
         ));
       }
       return i2cMcp9808.deviceId();
-    }).then((deviceId) => {
+    }).then(deviceId => {
       if (deviceId !== DEVICE_ID) {
         return Promise.reject(new Error(
           'Expected device ID to be 0x' + DEVICE_ID.toString(16) +
@@ -435,7 +406,7 @@ class Mcp9808 extends EventEmitter {
         ));
       }
       return i2cMcp9808.softReset();
-    }).then(() => {
+    }).then(_ => {
       if (options.lowerAlertTemperature !== undefined) {
         return Promise.all([
           i2cMcp9808.lowerAlertTemperature(options.lowerAlertTemperature),
@@ -443,32 +414,23 @@ class Mcp9808 extends EventEmitter {
           i2cMcp9808.criticalTemperature(options.criticalTemperature)
         ]);
       }
-    }).then(() => {
+    }).then(_ => {
       if (options.hysteresis !== undefined) {
         return i2cMcp9808.hysteresis(options.hysteresis);
       }
-    }).then(() => {
+    }).then(_ => {
       if (options.resolution !== undefined) {
         return i2cMcp9808.resolution(options.resolution);
       }
-    }).then(() => {
-      return tempSensor;
-    });
+    }).then(_ => tempSensor);
   }
 
   close() {
-    return new Promise((resolve, reject) => {
+    return Promise.resolve().then(_ => {
       if (this._alertGpio !== null) {
         this._alertGpio.unexport();
       }
-
-      this._i2cBus.close((err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
+      return this._i2cBus.close();
     });
   }
 

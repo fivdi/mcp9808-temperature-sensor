@@ -9,14 +9,12 @@ Mcp9808.open({
   lowerAlertTemperature: 25,
   upperAlertTemperature: 35,
   criticalTemperature: 45
-}).then((sensor) => {
-  setInterval(() => {
-    sensor.temperature().then((temp) => {
-      console.log(temp.celsius + '°C');
-    });
+}).then(sensor => {
+  setInterval(_ => {
+    sensor.temperature().then(temp => console.log(temp.celsius + '°C'));
   }, 1000);
 
-  sensor.on('alert', (temp) => {
+  sensor.on('alert', temp => {
     console.log('  alert ' + temp.celsius + '°C');
     if (temp.critical) {
       console.log('    critical');
@@ -30,7 +28,5 @@ Mcp9808.open({
   });
 
   return sensor.enableAlerts();
-}).catch((err) => {
-  console.log(err.stack);
-});
+}).catch(console.log);
 

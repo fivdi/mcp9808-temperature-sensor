@@ -2,16 +2,18 @@
 
 const Mcp9808 = require('../');
 
-Mcp9808.open().then((tempSensor) => {
+Mcp9808.open().then(sensor => {
   const startTime = process.hrtime();
   let readCount = 0;
 
-  const next = () => {
-    tempSensor.temperature().then((temp) => {
+  const next = _ => {
+    sensor.temperature().then(temperature => {
       readCount += 1;
+
       if (readCount % 1000 === 0) {
-        console.log('  ' + readCount + ', ' + temp.celsius + '°C');
+        console.log('  ' + readCount + ', ' + temperature.celsius + '°C');
       }
+
       if (readCount < 5000) {
         next();
       } else {
@@ -22,15 +24,11 @@ Mcp9808.open().then((tempSensor) => {
 
         console.log('  ' + readsPerSecond + ' reads per second');
 
-        return tempSensor.close();
+        return sensor.close();
       }
-    }).catch((err) => {
-      console.log(err.stack);
-    });
+    }).catch(console.log);
   };
 
   next();
-}).catch((err) => {
-  console.log(err.stack);
-});
+}).catch(console.log);
 

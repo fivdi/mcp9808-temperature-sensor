@@ -1,98 +1,72 @@
 'use strict';
 
+const assert = require('assert');
 const Mcp9808 = require('../');
 const currentTemperature = require('./current-temperature');
 
-let currentTemp;
-let tempSensor;
-
 // check belowLowerLimit
-currentTemperature().then((temp) => {
-  currentTemp = temp;
-
-  return Mcp9808.open({
+currentTemperature().then(currentTemp =>
+  Mcp9808.open({
     lowerAlertTemperature: currentTemp + 10,
     upperAlertTemperature: currentTemp + 20,
     criticalTemperature: currentTemp + 30
-  });
-}).then((sensor) => {
-  tempSensor = sensor;
-
-  return tempSensor.temperature();
-}).then((tempData) => {
-  if (tempData.belowLowerLimit !== true ||
-      tempData.aboveUpperLimit !== false ||
-      tempData.critical !== false) {
-    return Promise.reject(new Error(
+  })
+).then(sensor =>
+  sensor.temperature().then(temp =>
+    assert(
+      temp.belowLowerLimit === true &&
+      temp.aboveUpperLimit === false &&
+      temp.critical === false,
       'Expected belowLowerLimit only.'
-    ));
-  }
-
-  return tempSensor.close();
+    )
+  ).then(_ => sensor.close())
 // check all false
-}).then(() => {
-  return Mcp9808.open({
+).then(_ => currentTemperature()).then(currentTemp =>
+  Mcp9808.open({
     lowerAlertTemperature: currentTemp - 10,
     upperAlertTemperature: currentTemp + 10,
     criticalTemperature: currentTemp + 20
-  });
-}).then((sensor) => {
-  tempSensor = sensor;
-
-  return tempSensor.temperature();
-}).then((tempData) => {
-  if (tempData.belowLowerLimit !== false ||
-      tempData.aboveUpperLimit !== false ||
-      tempData.critical !== false) {
-    return Promise.reject(new Error(
+  })
+).then(sensor =>
+  sensor.temperature().then(temp =>
+    assert(
+      temp.belowLowerLimit === false &&
+      temp.aboveUpperLimit === false &&
+      temp.critical === false,
       'Expected all false.'
-    ));
-  }
-
-  return tempSensor.close();
+    )
+  ).then(_ => sensor.close())
 // check aboveUpperLimit only
-}).then(() => {
-  return Mcp9808.open({
+).then(_ => currentTemperature()).then(currentTemp =>
+  Mcp9808.open({
     lowerAlertTemperature: currentTemp - 20,
     upperAlertTemperature: currentTemp - 10,
     criticalTemperature: currentTemp + 10
-  });
-}).then((sensor) => {
-  tempSensor = sensor;
-
-  return tempSensor.temperature();
-}).then((tempData) => {
-  if (tempData.belowLowerLimit !== false ||
-      tempData.aboveUpperLimit !== true ||
-      tempData.critical !== false) {
-    return Promise.reject(new Error(
+  })
+).then(sensor =>
+  sensor.temperature().then(temp =>
+    assert(
+      temp.belowLowerLimit === false &&
+      temp.aboveUpperLimit === true &&
+      temp.critical === false,
       'Expected aboveUpperLimit only.'
-    ));
-  }
-
-  return tempSensor.close();
+    )
+  ).then(_ => sensor.close())
 // check critical and aboveUpperLimit only
-}).then(() => {
-  return Mcp9808.open({
+).then(_ => currentTemperature()).then(currentTemp =>
+  Mcp9808.open({
     lowerAlertTemperature: currentTemp - 30,
     upperAlertTemperature: currentTemp - 20,
     criticalTemperature: currentTemp - 10
-  });
-}).then((sensor) => {
-  tempSensor = sensor;
-
-  return tempSensor.temperature();
-}).then((tempData) => {
-  if (tempData.belowLowerLimit !== false ||
-      tempData.aboveUpperLimit !== true ||
-      tempData.critical !== true) {
-    return Promise.reject(new Error(
+  })
+).then(sensor =>
+  sensor.temperature().then(temp =>
+    assert(
+      temp.belowLowerLimit === false &&
+      temp.aboveUpperLimit === true &&
+      temp.critical === true,
       'Expected critical and aboveUpperLimit only.'
-    ));
-  }
-
-  return tempSensor.close();
-}).catch((err) => {
-  console.log(err.stack);
-});
+    )
+  ).then(_ => sensor.close())
+).catch(console.log);
 

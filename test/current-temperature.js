@@ -2,20 +2,14 @@
 
 const Mcp9808 = require('../');
 
-const currentTemperature = () => {
-  let tempSensor;
-  let celsius;
-
-  return Mcp9808.open().then((sensor) => {
-    tempSensor = sensor;
-    return tempSensor.temperature();
-  }).then((temp) => {
-    celsius = temp.celsius;
-    return tempSensor.close();
-  }).then(() => {
-    return celsius;
-  });
-};
+const currentTemperature = () =>
+  Mcp9808.open().then(sensor =>
+    sensor.temperature().
+    then(temp =>
+      sensor.close().
+      then(_ => Promise.resolve(temp.celsius))
+    )
+  );
 
 module.exports = currentTemperature;
 

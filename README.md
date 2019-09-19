@@ -50,20 +50,11 @@ Log the temperature in degrees Celsius to the console.
 ```js
 const Mcp9808 = require('mcp9808-temperature-sensor');
 
-let tempSensor;
-
-Mcp9808.open({
-  i2cBusNumber: 1, // optional, default 1
-  i2cAddress: 0x18 // optional, default 0x18
-}).then((sensor) => {
-  tempSensor = sensor;
-  return tempSensor.temperature();
-}).then((temp) => {
-  console.log(temp.celsius + '°C');
-  return tempSensor.close();
-}).catch((err) => {
-  console.log(err.stack);
-});
+Mcp9808.open().then(sensor => {
+  sensor.temperature().
+  then(temp => console.log(temp.celsius + '°C')).
+  then(_ => sensor.close())
+}).catch(console.log);
 ```
 
 #### Alerts
@@ -84,14 +75,12 @@ Mcp9808.open({
   lowerAlertTemperature: 25,
   upperAlertTemperature: 35,
   criticalTemperature: 45
-}).then((sensor) => {
-  setInterval(() => {
-    sensor.temperature().then((temp) => {
-      console.log(temp.celsius + '°C');
-    });
+}).then(sensor => {
+  setInterval(_ => {
+    sensor.temperature().then(temp => console.log(temp.celsius + '°C'));
   }, 1000);
 
-  sensor.on('alert', (temp) => {
+  sensor.on('alert', temp => {
     console.log('  alert ' + temp.celsius + '°C');
     if (temp.critical) {
       console.log('    critical');
@@ -105,9 +94,7 @@ Mcp9808.open({
   });
 
   return sensor.enableAlerts();
-}).catch((err) => {
-  console.log(err.stack);
-});
+}).catch(console.log);
 ```
 
 ## API
