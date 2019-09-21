@@ -1,5 +1,5 @@
-Unpbulished
-===========
+1.0.12 / Sep 21 2019
+====================
   * document error event
 
 1.0.11 / Sep 21 2019
