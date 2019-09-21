@@ -39,7 +39,7 @@ const ALERT_MODE_BIT = 0x0001;
 
 const configRegLock = mutexify();
 
-const validateOpenOptions = (options) => {
+const validateOpenOptions = options => {
   if (typeof options !== 'object') {
     return 'Expected options to be of type object.' +
       ' Got type ' + typeof options + '.';
@@ -169,10 +169,39 @@ const validateOpenOptions = (options) => {
   return null;
 };
 
+const watchAlertGpio = (alertGpio, tempSensor, i2cMcp9808) => {
+  let lastAlertWasCritical = false;
+
+  alertGpio.watch((err, value) => {
+    if (err) {
+      tempSensor.emit('error', err);
+      return;
+    }
+
+    let fallingEdge = (value === 0);
+
+    tempSensor.temperature().then(temperature => {
+      if (fallingEdge || lastAlertWasCritical) {
+        tempSensor.emit('alert', temperature);
+      }
+
+      lastAlertWasCritical = temperature.critical;
+
+      if (fallingEdge && !temperature.critical) {
+        return i2cMcp9808.configuration(INTERRUPT_CLEAR_BIT, 0);
+      }
+    }).catch(err => tempSensor.emit('error', err));
+  });
+};
+
 class I2cMcp9808 {
   constructor(i2cBus, i2cAddress) {
     this._i2cBus = i2cBus;
     this._i2cAddress = i2cAddress;
+  }
+
+  close() {
+    return this._i2cBus.close();
   }
 
   writeByte(register, byte) {
@@ -191,23 +220,18 @@ class I2cMcp9808 {
   }
 
   softReset() {
-    return this.configuration(0, SHUTDOWN_BIT).then(_ =>
-      this.configuration(0, ALERT_ENABLED_BIT)
-    ).then(_ =>
-      this.configuration(0, ALERT_MODE_BIT) // TODO - can this be removed?
-    ).then(_ =>
-      Promise.all([
-        this.lowerAlertTemperature(0),
-        this.upperAlertTemperature(0),
-        this.criticalTemperature(0)
-      ])
-    ).then(_ =>
-      this.resolution(Mcp9808.RESOLUTION_1_16)
-    ).then(_ =>
-      this.configuration(
-        INTERRUPT_CLEAR_BIT, CONFIGURATION_BITS ^ INTERRUPT_CLEAR_BIT
-      )
-    );
+    return this.configuration(0, SHUTDOWN_BIT).
+      then(_ => this.configuration(0, ALERT_ENABLED_BIT)).
+      then(_ => this.configuration(0, ALERT_MODE_BIT)). // TODO - can this be removed?
+      then(_ => this.lowerAlertTemperature(0)).
+      then(_ => this.upperAlertTemperature(0)).
+      then(_ => this.criticalTemperature(0)).
+      then(_ => this.resolution(Mcp9808.RESOLUTION_1_16)).
+      then(_ =>
+        this.configuration(
+          INTERRUPT_CLEAR_BIT, CONFIGURATION_BITS ^ INTERRUPT_CLEAR_BIT
+        )
+      );
   }
 
   configuration(bitsToSet, bitsToReset) {
@@ -223,16 +247,16 @@ class I2cMcp9808 {
         releaseConfigRegLock = release;
         resolve();
       });
-    }).then(_ =>
-      this.readWord(CONFIGURATION_REG)
-    ).then(config => {
+    }).
+    then(_ => this.readWord(CONFIGURATION_REG)).
+    then(config => {
       config |= bitsToSet;
       config &= (~bitsToReset & 0xffff);
 
       return this.writeWord(CONFIGURATION_REG, config);
-    }).then(_ =>
-      releaseConfigRegLock()
-    ).catch(err => {
+    }).
+    then(_ => releaseConfigRegLock()).
+    catch(err => {
       if (releaseConfigRegLock !== null) {
         releaseConfigRegLock();
       }
@@ -321,10 +345,9 @@ class Mcp9808 extends EventEmitter {
   static get HYSTERESIS_3() {return 2;}
   static get HYSTERESIS_6() {return 3;}
 
-  constructor(i2cBus, i2cMcp9808, alertGpio) {
+  constructor(i2cMcp9808, alertGpio) {
     super();
 
-    this._i2cBus = i2cBus;
     this._i2cMcp9808 = i2cMcp9808;
     this._alertGpio = alertGpio;
   }
@@ -333,62 +356,34 @@ class Mcp9808 extends EventEmitter {
     let i2cMcp9808;
     let tempSensor;
 
-    return new Promise((resolve, reject) => {
+    return Promise.resolve().then(_ => {
       options = options || {};
 
       let errMsg = validateOpenOptions(options);
-
       if (errMsg) {
-        reject(new Error(errMsg));
-      } else {
-        resolve();
+        return Promise.reject(new Error(errMsg));
       }
-    }).then(_ => {
-      const i2cBusNumber = options.i2cBusNumber === undefined ?
-        DEFAULT_I2C_BUS : options.i2cBusNumber;
 
-      return i2c.openPromisified(i2cBusNumber).then(i2cBus => {
-        let alertGpio = null;
-        let lastAlertWasCritical = false;
+      return i2c.openPromisified(options.i2cBusNumber === undefined ?
+        DEFAULT_I2C_BUS : options.i2cBusNumber);
+    }).then(i2cBus => {
+      const i2cAddress = options.i2cAddress === undefined ?
+        DEFAULT_I2C_ADDRESS : options.i2cAddress;
+      i2cMcp9808 = new I2cMcp9808(i2cBus, i2cAddress);
 
-        if (options.alertGpioNumber !== undefined) {
-          alertGpio = new Gpio(options.alertGpioNumber, 'in', 'both');
+      let alertGpio = null;
+      if (options.alertGpioNumber !== undefined) {
+        alertGpio = new Gpio(options.alertGpioNumber, 'in', 'both');
+      }
 
-          alertGpio.watch((err, value) => {
-            if (err) {
-              tempSensor.emit('error', err);
-              return;
-            }
+      tempSensor = new Mcp9808(i2cMcp9808, alertGpio);
 
-            let fallingEdge = (value === 0);
-
-            tempSensor.temperature().then((temp) => {
-              if (fallingEdge || lastAlertWasCritical) {
-                tempSensor.emit('alert', temp);
-              }
-
-              lastAlertWasCritical = temp.critical;
-
-              if (fallingEdge && !temp.critical) {
-                return i2cMcp9808.configuration(INTERRUPT_CLEAR_BIT, 0);
-              }
-            }).catch((err) => {
-              tempSensor.emit('error', err);
-            });
-          });
-        }
-
-        const i2cAddress = options.i2cAddress === undefined ?
-          DEFAULT_I2C_ADDRESS : options.i2cAddress;
-
-        i2cMcp9808 = new I2cMcp9808(i2cBus, i2cAddress);
-
-        return new Mcp9808(i2cBus, i2cMcp9808, alertGpio);
-      });
-    }).then(sensor => {
-      tempSensor = sensor;
-      return i2cMcp9808.manufacturerId();
-    }).then(manufacturerId => {
+      if (alertGpio !== null) {
+        watchAlertGpio(alertGpio, tempSensor, i2cMcp9808);
+      }
+    }).then(_ =>
+      i2cMcp9808.manufacturerId()
+    ).then(manufacturerId => {
       if (manufacturerId !== MANUFACTURER_ID) {
         return Promise.reject(new Error(
           'Expected manufacturer ID to be 0x' + MANUFACTURER_ID.toString(16) +
@@ -430,7 +425,7 @@ class Mcp9808 extends EventEmitter {
       if (this._alertGpio !== null) {
         this._alertGpio.unexport();
       }
-      return this._i2cBus.close();
+      return this._i2cMcp9808.close();
     });
   }
 
