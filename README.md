@@ -112,6 +112,7 @@ Mcp9808.open({
 ### Events
 
 - [Event: 'alert'](#event-alert)
+- [Event: 'error'](#event-error)
 
 ### Constants
 
@@ -158,6 +159,13 @@ Mcp9808.
 
 ### Event: 'alert'
 - temperatureData - object containing [temperature data](#temperature-data)
+
+Fired when an alert is detected.
+
+### Event: 'error'
+- err - Error object
+
+Fired when an error occurs during alert detection.
 
 ### RESOLUTION_1_2
 0.5°C resolution.
