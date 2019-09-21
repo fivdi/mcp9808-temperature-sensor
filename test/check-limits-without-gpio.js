@@ -1,12 +1,12 @@
 'use strict';
 
 const assert = require('assert');
-const Mcp9808 = require('../');
+const mcp9808 = require('../');
 const currentTemperature = require('./current-temperature');
 
 // check belowLowerLimit
 currentTemperature().then(currentTemp =>
-  Mcp9808.open({
+  mcp9808.open({
     lowerAlertTemperature: currentTemp + 10,
     upperAlertTemperature: currentTemp + 20,
     criticalTemperature: currentTemp + 30
@@ -22,7 +22,7 @@ currentTemperature().then(currentTemp =>
   ).then(_ => sensor.close())
 // check all false
 ).then(_ => currentTemperature()).then(currentTemp =>
-  Mcp9808.open({
+  mcp9808.open({
     lowerAlertTemperature: currentTemp - 10,
     upperAlertTemperature: currentTemp + 10,
     criticalTemperature: currentTemp + 20
@@ -38,7 +38,7 @@ currentTemperature().then(currentTemp =>
   ).then(_ => sensor.close())
 // check aboveUpperLimit only
 ).then(_ => currentTemperature()).then(currentTemp =>
-  Mcp9808.open({
+  mcp9808.open({
     lowerAlertTemperature: currentTemp - 20,
     upperAlertTemperature: currentTemp - 10,
     criticalTemperature: currentTemp + 10
@@ -54,7 +54,7 @@ currentTemperature().then(currentTemp =>
   ).then(_ => sensor.close())
 // check critical and aboveUpperLimit only
 ).then(_ => currentTemperature()).then(currentTemp =>
-  Mcp9808.open({
+  mcp9808.open({
     lowerAlertTemperature: currentTemp - 30,
     upperAlertTemperature: currentTemp - 20,
     criticalTemperature: currentTemp - 10

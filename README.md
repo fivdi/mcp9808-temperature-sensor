@@ -48,9 +48,9 @@ the MCP9808 breakout board to GPIO27 on the Raspberry Pi are needed for the
 Log the temperature in degrees Celsius to the console.
 
 ```js
-const Mcp9808 = require('mcp9808-temperature-sensor');
+const mcp9808 = require('mcp9808-temperature-sensor');
 
-Mcp9808.open().then(sensor => {
+mcp9808.open().then(sensor => {
   sensor.temperature().
   then(temp => console.log(temp.celsius + '°C')).
   then(_ => sensor.close())
@@ -66,9 +66,9 @@ A hair dryer or blow dryer can be used to blow hot air over the MCP9808
 temperature sensor and increase its temperature.
 
 ```js
-const Mcp9808 = require('mcp9808-temperature-sensor');
+const mcp9808 = require('mcp9808-temperature-sensor');
 
-Mcp9808.open({
+mcp9808.open({
   i2cBusNumber: 1, // optional, default 1
   i2cAddress: 0x18, // optional, default 0x18
   alertGpioNumber: 27,

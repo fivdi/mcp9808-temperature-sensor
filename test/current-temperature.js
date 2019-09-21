@@ -1,9 +1,9 @@
 'use strict';
 
-const Mcp9808 = require('../');
+const mcp9808 = require('../');
 
 const currentTemperature = () =>
-  Mcp9808.open().then(sensor =>
+  mcp9808.open().then(sensor =>
     sensor.temperature().
     then(temp =>
       sensor.close().

@@ -1,10 +1,10 @@
 'use strict';
 
-const Mcp9808 = require('../');
+const mcp9808 = require('../');
 const currentTemperature = require('./current-temperature');
 
 currentTemperature().then(currentTemp =>
-  Mcp9808.open({
+  mcp9808.open({
     alertGpioNumber: 27,
     lowerAlertTemperature: currentTemp - 20,
     upperAlertTemperature: currentTemp - 10,

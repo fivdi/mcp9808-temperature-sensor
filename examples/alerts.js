@@ -1,8 +1,8 @@
 'use strict';
 
-const Mcp9808 = require('../');
+const mcp9808 = require('../');
 
-Mcp9808.open({
+mcp9808.open({
   i2cBusNumber: 1, // optional, default 1
   i2cAddress: 0x18, // optional, default 0x18
   alertGpioNumber: 27,

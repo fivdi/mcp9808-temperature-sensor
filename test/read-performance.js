@@ -1,8 +1,8 @@
 'use strict';
 
-const Mcp9808 = require('../');
+const mcp9808 = require('../');
 
-Mcp9808.open().then(sensor => {
+mcp9808.open().then(sensor => {
   const startTime = process.hrtime();
   let readCount = 0;
 
