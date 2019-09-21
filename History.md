@@ -1,3 +1,7 @@
+Unpublished
+===========
+  * update dependencies (onoff v5.0.0)
+
 1.0.12 / Sep 21 2019
 ====================
   * document error event
