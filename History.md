@@ -1,5 +1,5 @@
-Unpublished
-===========
+1.0.11 / Sep 21 2019
+====================
   * drop support for node 4
   * update dependencies (i2c-bus v5.0.0)
   * improve code style
