@@ -50,11 +50,11 @@ Log the temperature in degrees Celsius to the console.
 ```js
 const mcp9808 = require('mcp9808-temperature-sensor');
 
-mcp9808.open().then(sensor => {
+mcp9808.open().then(sensor =>
   sensor.temperature().
   then(temp => console.log(temp.celsius + '°C')).
   then(_ => sensor.close())
-}).catch(console.log);
+).catch(console.log);
 ```
 
 #### Alerts
