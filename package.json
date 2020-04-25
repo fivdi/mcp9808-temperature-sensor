@@ -16,15 +16,15 @@
     "url": "https://github.com/fivdi/mcp9808-temperature-sensor.git"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "dependencies": {
-    "i2c-bus": "^5.0.0",
-    "onoff": "^5.0.0",
+    "i2c-bus": "^5.2.0",
+    "onoff": "^6.0.0",
     "mutexify": "^1.2.0"
   },
   "devDependencies": {
-    "jshint": "^2.10.2"
+    "jshint": "^2.11.0"
   },
   "keywords": [
     "mcp9808",

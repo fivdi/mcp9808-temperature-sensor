@@ -1,3 +1,8 @@
+Unpublished
+===========
+  * update dependencies (i2c-bus v5.2.0, onoff v6.0.0, jshint v2.11.0)
+  * drop support for node.js 6, add support for node.js 14
+
 1.0.13 / Sep 23 2019
 ====================
   * update dependencies (onoff v5.0.0)
