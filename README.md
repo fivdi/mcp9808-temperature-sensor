@@ -7,7 +7,7 @@
 MCP9808 I2C temperature sensor module for Node.js on Linux boards like the
 Raspberry Pi or BeagleBone.
 
-Supports Node.js versions 6, 8, 10, 12 and 13.
+Supports Node.js versions 8, 10, 12, 13 and 14
 
 ## Contents
 
