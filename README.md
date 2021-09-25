@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/fivdi/mcp9808-temperature-sensor.svg?branch=master)](https://travis-ci.org/fivdi/mcp9808-temperature-sensor)
+[![Build Status](https://app.travis-ci.com/fivdi/mcp9808-temperature-sensor.svg?branch=master)](https://app.travis-ci.com/github/fivdi/mcp9808-temperature-sensor)
 [![npm Version](http://img.shields.io/npm/v/mcp9808-temperature-sensor.svg)](https://www.npmjs.com/package/mcp9808-temperature-sensor)
 [![Downloads Per Month](http://img.shields.io/npm/dm/mcp9808-temperature-sensor.svg)](https://www.npmjs.com/package/mcp9808-temperature-sensor)
 
